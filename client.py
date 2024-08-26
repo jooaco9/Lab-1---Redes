@@ -1,8 +1,6 @@
 from socket import *
 from jsonrpc import JSONRPC
 import json
-import sys
-print(sys.path)
 
 class Client:
   def connect(self, host, port):
