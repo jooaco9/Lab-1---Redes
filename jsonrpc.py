@@ -34,7 +34,7 @@ class JSONRPC:
     }
   
   @staticmethod
-  def create_error_response(code, message, id, data=None):
+  def create_error_response(code, message, id=None, data=None):
     error = {
       "code": code,
       "message": message
@@ -44,27 +44,27 @@ class JSONRPC:
     return {
       "jsonrpc": "2.0",
       "error": error,
-      "id": id
+      "id": id or str(uuid.uuid4())
     }
   
   @classmethod
   def parse_error(cls, id=None):
-      return cls.create_error_response(cls.PARSE_ERROR, "Parse error", id)
+    return cls.create_error_response(cls.PARSE_ERROR, "Parse error", id)
 
   @classmethod
   def invalid_request(cls, id=None):
-      return cls.create_error_response(cls.INVALID_REQUEST, "Invalid Request", id)
+    return cls.create_error_response(cls.INVALID_REQUEST, "Invalid Request", id)
 
   @classmethod
   def method_not_found(cls, id):
-      return cls.create_error_response(cls.METHOD_NOT_FOUND, "Method not found", id)
+    return cls.create_error_response(cls.METHOD_NOT_FOUND, "Method not found", id)
 
   @classmethod
   def invalid_params(cls, id):
-      return cls.create_error_response(cls.INVALID_PARAMS, "Invalid params", id)
+    return cls.create_error_response(cls.INVALID_PARAMS, "Invalid params", id)
 
   @classmethod
   def internal_error(cls, id):
-      return cls.create_error_response(cls.INTERNAL_ERROR, "Internal error", id)
+    return cls.create_error_response(cls.INTERNAL_ERROR, "Internal error", id)
 
 
