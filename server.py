@@ -26,7 +26,8 @@ class Server:
         thread.start()
         #thread.join() Tendria que ir?? 
        
-    def add_method(self, name, method):
+    def add_method(self, method):
+      name = method.__name__
       self.methods[name] = method
         
     def handle_client(self, client_socket):
@@ -64,6 +65,6 @@ def resta(x, y):
   return x - y
 
 server = Server('localhost', 8080)
-server.add_method('suma', suma)
-server.add_method('resta', resta)
+server.add_method(suma)
+server.add_method(resta)
 server.serve()
