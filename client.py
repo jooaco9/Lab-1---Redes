@@ -19,26 +19,34 @@ class Client:
       print(f"Error: {e}")
 
   def __getattr__(self, name):
-    def method(*args):
-      request = JSONRPC.create_request(name, args)
+    def method(*args,**kwargs):
+      notify = kwargs.pop('notify', False)
+      if notify:
+          request = JSONRPC.create_notification(name, args)
+      else:
+          request = JSONRPC.create_request(name, args)
+      
       self.skt.sendall(json.dumps(request).encode())
       
-      buff = ""
-      while True:
-        try:
-          data = self.skt.recv(1024).decode()
-          buff += data
-        except Exception as e:
-          print(f"Error: {e}")
-          break
-        
-        try:
-          response = json.loads(buff)
-          break
-        except json.JSONDecodeError:
-          continue
-
-      return response['result']
+      if not notify:
+        buff = ""
+        while True:
+          try:
+            data = self.skt.recv(1024).decode()
+            buff += data
+          except Exception as e:
+            print(f"Error: {e}")
+            break
+          
+          try:
+            response = json.loads(buff)
+            break
+          except json.JSONDecodeError:
+            continue
+          
+          return response['result']
+      else:
+          return 'ES NOTIFICACION'
     return method
     
 @Client
@@ -48,7 +56,8 @@ def connect(host, port):
 conn = connect('localhost', 8080)
 if conn:
     print("Conexión exitosa.")
-    print(conn.resta(9, 6))
+  #SI ES NOTIFICACION PONER notify = true
+    print(conn.resta(9, 6,notify = True))
 
 else:
     print("Conexión fallida.")
