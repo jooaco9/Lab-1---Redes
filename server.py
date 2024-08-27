@@ -51,11 +51,14 @@ class Server:
       method = self.methods.get(request['method'])
       if method:
         result = method(*request['params']) #ver donde queda el metodo
-        response = JSONRPC.create_response(result, request['id'])
+        if 'id' in request:
+            response = JSONRPC.create_response(result, request['id'])
       else:
         response = {"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found"}, "id": request['id']}
+        
+      if 'id' in request:
+          client_socket.sendall(json.dumps(response).encode())    
       
-      client_socket.sendall(json.dumps(response).encode())    
       client_socket.close()   
 
 def suma(x, y):
