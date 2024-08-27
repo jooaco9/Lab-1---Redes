@@ -3,14 +3,18 @@ from jsonrpc import JSONRPC
 import json
 
 class Client:
-  def connect(self, host, port):
+  def __init__(self,function):
+    pass
+    
+  def __call__(self, host, port):
     self.host = host
     self.port = port
 
     # Crear el socket TCP
     self.skt = socket(AF_INET, SOCK_STREAM)
     try:
-      return self.skt.connect((self.host, self.port))
+      self.skt.connect((self.host, self.port))
+      return self
     except Exception as e:
       print(f"Error: {e}")
 
@@ -36,7 +40,15 @@ class Client:
 
       return response['result']
     return method
+    
+@Client
+def connect(host, port):
+  pass
+  
+conn = connect('localhost', 8080)
+if conn:
+    print("Conexión exitosa.")
+    print(conn.resta(9, 6))
 
-client = Client()
-client.connect('localhost', 8080)
-print(client.resta(5, 6))
+else:
+    print("Conexión fallida.")
