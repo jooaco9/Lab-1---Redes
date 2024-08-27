@@ -21,7 +21,7 @@ class Server:
       print(f"Server escuchando en {self.host}:{self.port}")
       while True:
         client, addr = self.skt.accept()
-        print(f"Acepto coneccion de {addr}")
+        print(f"Conexion aceptada de {addr}")
         thread = threading.Thread(target=self.handle_client, args=(client,))
         thread.start()
         #thread.join() Tendria que ir?? 
@@ -34,14 +34,14 @@ class Server:
       buffer = ""
       while True:
         try:
-            data = client_socket.recv(1024).decode("utf-8")  
-            if not data:  
-                break     # NO TIENE SETNIDO PQ SI ES VACIO
-            buffer += data
+          data = client_socket.recv(1024).decode("utf-8")  
+          if not data:  
+            break     # NO TIENE SETNIDO PQ SI ES VACIO
+          buffer += data
         except Exception as e:    
-            print(f"Error: {e}") 
-            break
-
+          print(f"Error: {e}") 
+          break
+      
         try:
           request = json.loads(buffer) 
           break       
@@ -54,7 +54,7 @@ class Server:
         if 'id' in request:
             response = JSONRPC.create_response(result, request['id'])
       else:
-        response = {"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found"}, "id": request['id']}
+        response = JSONRPC.method_not_found(request['id'])
         
       if 'id' in request:
           client_socket.sendall(json.dumps(response).encode())    
