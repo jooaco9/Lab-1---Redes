@@ -15,8 +15,12 @@ class Client:
     try:
       self.skt.connect((self.host, self.port))
       return self
-    except Exception as e:
-      print(f"Error: {e}")
+    except ConnectionRefusedError:
+      code = -32001
+      message = "No se pudo establecer la conexion con el servidor"
+      response = JSONRPC.create_error_response(code, message)
+      print(response['error']['message'])
+      
 
   def __getattr__(self, name):
     def method(*args,**kwargs):
@@ -62,8 +66,14 @@ def connect(host, port):
   
 conn = connect('localhost', 8080)
 if conn:
-    print("Conexión exitosa.")
-  # #SI ES NOTIFICACION PONER notify = true
-  #   print(f"Resultado de la resta 9 - 6 = {conn.restas(9, 6,notify = False)}")
+  print("Conexión exitosa.")
+
+  # si es notificacion poner -> notify = true
+  print(f"Resultado de la resta 9 - 6 = {conn.resta(9, 6, notify = False)}")
+  print(f"Resultado de la resta 9 - 19 = {conn.resta(9, 19, notify = False)}")
+  print(f"Resultado de la multiplicacion 9 - 19 = {conn.multiplicar(9, 9, notify = False)}")
+  print(f"Resultado de la suma 23 + 7 = {conn.suma(23, 7, notify = False)}")
+  conn.close()
+  print("Cerrando conexión...")
 else:
-    print("Conexión fallida.")
+  print("Conexión fallida.")
