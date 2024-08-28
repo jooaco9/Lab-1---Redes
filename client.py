@@ -75,5 +75,3 @@ if conn:
   print(f"Resultado de la suma 23 + 7 = {conn.suma(23, 7, notify = False)}")
   conn.close()
   print("Cerrando conexión...")
-else:
-  print("Conexión fallida.")
