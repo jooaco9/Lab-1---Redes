@@ -17,7 +17,7 @@ class Server:
            
     def serve(self):
       # Configurar el socket para escuchar conexiones
-      self.skt.listen()     # PREGUNTAR SI TIENE QUE IR EN CONSTRUCTOR O ESTA BIEN
+      self.skt.listen()     
       print(f"Server escuchando en {self.host}:{self.port}")
       
       while True:
@@ -25,7 +25,6 @@ class Server:
         print(f"Conexion aceptada de {addr}")
         thread = threading.Thread(target=self.handle_client, args=(client,))
         thread.start()
-        #thread.join() Tendria que ir?? 
        
     def add_method(self, method):
       name = method.__name__
@@ -39,12 +38,10 @@ class Server:
         buffer=""
         while not "}" in buffer:
           try:
-            data = client_socket.recv(64).decode("utf-8") 
-            print(f"DATA: {data}") 
+            data = client_socket.recv(1024).decode("utf-8") 
             if not data:
               break
             buffer += data
-            print(f"buffer: {buffer}")
           except Exception as e:    
             print(f"Error: {e}") 
             break
@@ -58,14 +55,14 @@ class Server:
 
           if method:
             try:
-              result = method(*request['params']) #ver donde queda el metodo
-            except Exception as e:
-              print(f"Error: {e}")
-
-            if 'id' in request:
-              response = JSONRPC.create_response(result, request['id'])
+              result = method(*request['params']) 
+              if 'id' in request:
+                response = JSONRPC.create_response(result, request['id'])
+            except TypeError as e:
+              response = JSONRPC.invalid_params(request['id'], str(e))
           else:
-            response = JSONRPC.method_not_found(request['id'])
+            id = request.get('id')
+            response = JSONRPC.method_not_found(request['id'] if id else None)
             
           if 'id' in request:
             client_socket.sendall(json.dumps(response).encode())
