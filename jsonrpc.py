@@ -48,23 +48,23 @@ class JSONRPC:
     }
   
   @classmethod
-  def parse_error(cls, id=None):
-    return cls.create_error_response(cls.PARSE_ERROR, "Parse error", id)
+  def parse_error(cls, id=None, data=None):
+    return cls.create_error_response(cls.PARSE_ERROR, "Parse error", id, data)
 
   @classmethod
-  def invalid_request(cls, id=None):
-    return cls.create_error_response(cls.INVALID_REQUEST, "Invalid Request", id)
+  def invalid_request(cls, id=None, data=None):
+    return cls.create_error_response(cls.INVALID_REQUEST, "Invalid Request", id, data)
 
   @classmethod
-  def method_not_found(cls, id):
-    return cls.create_error_response(cls.METHOD_NOT_FOUND, "Method not found", id)
+  def method_not_found(cls, id=None, data=None):
+    return cls.create_error_response(cls.METHOD_NOT_FOUND, "Method not found", id, data)
 
   @classmethod
-  def invalid_params(cls, id):
-    return cls.create_error_response(cls.INVALID_PARAMS, "Invalid params", id)
+  def invalid_params(cls, id=None, data=None):
+    return cls.create_error_response(cls.INVALID_PARAMS, "Invalid params", id, data)
 
   @classmethod
-  def internal_error(cls, id):
-    return cls.create_error_response(cls.INTERNAL_ERROR, "Internal error", id)
+  def internal_error(cls, id=None, data=None):
+    return cls.create_error_response(cls.INTERNAL_ERROR, "Internal error", id, data)
 
 
