@@ -15,11 +15,11 @@ class Client:
     try:
       self.skt.connect((self.host, self.port))
       return self
-    except ConnectionRefusedError:
+    except ConnectionRefusedError as e:
       code = -32001
-      message = "No se pudo establecer la conexion con el servidor"
-      response = JSONRPC.create_error_response(code, message)
-      print(response['error']['message'])
+      message = "Connection Refused"
+      response = JSONRPC.create_error_response(code, message, data=str(e))
+      print(f"{response['error']['message']} -> {response['error']['data']}")
       
 
   def __getattr__(self, name):
@@ -53,7 +53,9 @@ class Client:
         if('result' in response):
           return response['result']
         else:
-          return response['error']['message']
+          error_message = response['error']['message']
+          error_data = response['error'].get('data')
+          return f"{error_message} -> {error_data}" if error_data else error_message
         
       else:
         return 'ES NOTIFICACION'
