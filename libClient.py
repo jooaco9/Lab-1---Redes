@@ -6,6 +6,7 @@ class Client:
   def __init__(self, function):
     pass
     
+  # Call
   def __call__(self, host, port):
     self.host = host
     self.port = port
@@ -15,27 +16,32 @@ class Client:
     try:
       self.skt.connect((self.host, self.port))
       return self
+
+    # Error al no poder conectarse
     except ConnectionRefusedError as e:
       code = -32001
       message = "Connection Refused"
       response = JSONRPC.create_error_response(code, message, data=str(e))
       print(f"{response['error']['message']} -> {response['error']['data']}")
       
-
+  # getattr 
   def __getattr__(self, name):
     def method(*args,**kwargs):
       notify = kwargs.pop('notify', False)
-
+      
+      # Verificacion de notificacion para crear request o notificacion
       if notify:
           request = JSONRPC.create_notification(name, args)
       else:
           request = JSONRPC.create_request(name, args)
       
+      # Se manda la request
       self.skt.sendall(json.dumps(request).encode())
 
       if not notify:
         buff = ""
 
+        # Recibir response
         while True:
           try:
             data = self.skt.recv(1024).decode()
@@ -45,11 +51,12 @@ class Client:
             break
           
           try:
-            response = json.loads(buff)
+            response = json.loads(buff) # eserialización
             break
           except json.JSONDecodeError:
             continue
         
+        # Verificacion de si es respuesta con resultado o si es un error
         if('result' in response):
           return response['result']
         else:
