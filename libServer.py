@@ -6,9 +6,8 @@ from socket import *
 class Server:
     
     # Constructor
-    def __init__(self, host, port ):
-      self.host = host
-      self.port = port
+    def __init__(self, address ):
+      self.host,self.port = address
       self.methods = {}
 
       # Crear el socket TCP
@@ -31,8 +30,8 @@ class Server:
 
     # Agregar metodos 
     def add_method(self, method):
-      name = method.__name__
-      self.methods[name] = method
+     self.name = method.__name__
+     self.methods[self.name] = method
 
     # Manejar el cliente 
     def handle_client(self, client_socket):
@@ -59,14 +58,14 @@ class Server:
         try:
           request = json.loads(buffer) # Deserialización
           method = self.methods.get(request['method']) # Obtener metodo
-
           if method:
             try:
               result = method(*request['params']) # Aplicar metodo
               if 'id' in request:
                 response = JSONRPC.create_response(result, request['id'])
             except TypeError as e:
-              response = JSONRPC.invalid_params(request['id'], str(e)) # Error de parametros
+              if 'id' in request:
+                response = JSONRPC.invalid_params(request['id'], str(e)) # Error de parametros
           else:
             id = request.get('id')
             response = JSONRPC.method_not_found(request['id'] if id else None) # Error de metodo no encontrado

@@ -1,3 +1,4 @@
+from libClientExceptions import *
 from socket import *
 from jsonrpc import JSONRPC
 import json
@@ -16,19 +17,35 @@ class Client:
     try:
       self.skt.connect((self.host, self.port))
       return self
-
+  
     # Error al no poder conectarse
     except ConnectionRefusedError as e:
       code = -32001
       message = "Connection Refused"
-      response = JSONRPC.create_error_response(code, message, data=str(e))
-      print(f"{response['error']['message']} -> {response['error']['data']}")
-      
+      data = str(e)
+     # response = JSONRPC.create_error_response(code, message, data=str(e))
+     # print(f"{response['error']['message']} -> {response['error']['data']}")
+
+    except TimeoutError as e:
+      code = 10060
+      message = "timeout"
+      data = str(e)
+     # response = JSONRPC.create_error_response(code, message, data=str(e))
+    #  print(f"{response['error']['message']} -> {response['error']['data']}")    
+    except gaierror as e:
+      code = 11001
+      message = "getaddrinfo failed"
+      data = ''
+    #  response = JSONRPC.create_error_response(code, message, data=str(e))
+    #  print(f"{response['error']['message']} -> {response['error']['data']}")
+    
+    raise lanzarExcepcion(code,message,data)
+
   # getattr 
   def __getattr__(self, name):
     def method(*args,**kwargs):
       notify = kwargs.pop('notify', False)
-      
+      args = list(args) + list(kwargs.values())
       # Verificacion de notificacion para crear request o notificacion
       if notify:
           request = JSONRPC.create_notification(name, args)
@@ -42,30 +59,37 @@ class Client:
         buff = ""
 
         # Recibir response
-        while True:
+        while not "}" in buff:
           try:
             data = self.skt.recv(1024).decode()
+            if not data:
+              break
             buff += data
           except Exception as e:
             print(f"Error: {e}")
-            break
-          
-          try:
-            response = json.loads(buff) # eserialización
-            break
-          except json.JSONDecodeError:
-            continue
-        
+            break 
+
+        try:
+          response = json.loads(buff) # deserialización
+        except json.JSONDecodeError:
+          response = JSONRPC.invalid_request()
+          error_message = response['error']['message']
+          error_data = response['error'].get('data')
+          code = response['error']['code']
+          raise lanzarExcepcion(code, error_data,error_message)
+        #ENDWHILE
+
         # Verificacion de si es respuesta con resultado o si es un error
         if('result' in response):
           return response['result']
         else:
           error_message = response['error']['message']
           error_data = response['error'].get('data')
-          return f"{error_message} -> {error_data}" if error_data else error_message
-        
+          code = response['error']['code']
+          raise lanzarExcepcion(code, error_message,error_data)
+
       else:
-        return 'ES NOTIFICACION'
+        return 
       
     return method
     
