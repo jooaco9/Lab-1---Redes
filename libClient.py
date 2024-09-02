@@ -1,7 +1,16 @@
-from libClientExceptions import *
 from socket import *
 from jsonrpc import JSONRPC
 import json
+
+class lanzarExcepcion(Exception):
+    def __init__(self, code, message, *args):
+        self.code = code
+        self.message = message
+        self.data = args  # Puedes usar esto para pasar datos adicionales si es necesario
+        super().__init__(message)  # Pasar el mensaje a la clase base Exception
+
+
+
 
 class Client:
   def __init__(self, function):
