@@ -1,4 +1,4 @@
-from libClient import connect 
+from jsonrpc_redes2 import connect 
 
 def test_client():
     # Este es el cliente de prueba que se ejecuta contra el

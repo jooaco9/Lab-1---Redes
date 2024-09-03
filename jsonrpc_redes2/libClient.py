@@ -1,5 +1,5 @@
 from socket import *
-from jsonrpc import JSONRPC
+from .jsonrpc import JSONRPC
 import json
 
 class lanzarExcepcion(Exception):

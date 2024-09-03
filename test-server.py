@@ -1,6 +1,4 @@
-from libServer import Server
-import threading
-import time
+from jsonrpc_redes2 import Server
 import sys
 
 def test_server():
@@ -22,11 +20,12 @@ def test_server():
     server.add_method(echo)
     server.add_method(summa)
     server.add_method(echo_concat)
-    server_thread = threading.Thread(target=server.serve)
-    server_thread.daemon = True
-    server_thread.start()
-    
-    print ("Servidor ejecutando: %s:%s" % (host, port))
+    #server_thread = threading.Thread(target=server.serve)
+    #server_thread.daemon = True
+    #server_thread.start()
+    server.serve()
+
+    #print ("Servidor ejecutando: %s:%s" % (host, port))
     
     try:
         while True:
