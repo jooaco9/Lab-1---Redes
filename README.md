@@ -8,11 +8,11 @@ El objetivo de esta biblioteca es permitir la comunicación RPC entre un cliente
 
 ### 2.1. Clase `Client`
 
-# Responsabilidad:
+#### Responsabilidad:
 
-# Gestionar la conexión TCP con el servidor y permitir que el cliente haga llamadas a procedimientos remotos de manera transparente.
+Gestionar la conexión TCP con el servidor y permitir que el cliente haga llamadas a procedimientos remotos de manera transparente.
 
-# Metodos y Funcionalidades:
+#### Metodos y Funcionalidades:
 
 - **Método `connect(address, port)`**:
 
