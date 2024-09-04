@@ -38,8 +38,8 @@ class Server:
 
     # Agregar metodos 
     def add_method(self, method):
-     self.name = method.__name__
-     self.methods[self.name] = method
+      self.name = method.__name__
+      self.methods[self.name] = method
 
     # Manejar el cliente 
     def handle_client(self, client_socket):
