@@ -16,6 +16,7 @@ def test_client():
       if e.data is not None:
           print(e.data)  # Imprime data solo si existe
       return
+    
     # Test de concatenar simple
     result = connS1.concatenar('a', 'b')
     assert result == 'ab'
@@ -40,7 +41,7 @@ def test_client():
       print('No se pudo conectar al servidor')
       print(e.code, e.message)
       if e.data is not None:
-          print(e.data)  # Imprime data solo si existe
+        print(e.data)  # Imprime data solo si existe
       return
     
     result = connS3.es_cadena_numerica('123')
@@ -70,7 +71,7 @@ def test_client():
       print('No se pudo conectar al servidor')
       print(e.code, e.message)
       if e.data is not None:
-          print(e.data)  # Imprime data solo si existe
+        print(e.data)  # Imprime data solo si existe
       return
         
     try:
@@ -91,60 +92,60 @@ def test_client():
 
     
     try:
-        connS2.concatenar('a')
+      connS2.concatenar('a')
     except Exception as e:
-        print('Llamada incorrecta de concatenar sin un parámetro. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta de concatenar sin un parámetro. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     try:
-        connS2.sumar()
+      connS2.sumar()
     except Exception as e:
-        print('Llamada incorrecta de sumar sin parámetros. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta de sumar sin parámetros. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     try:
-        connS2.sumar(1)
+      connS2.sumar(1)
     except Exception as e:
-        print('Llamada incorrecta de sumar sin un parámetro. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta de sumar sin un parámetro. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     try:
-        connS2.sumar('a', 'b')
+      connS2.sumar('a', 'b')
     except Exception as e:
-        print('Llamada incorrecta de sumar tipo de parametros. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta de sumar tipo de parametros. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     try:
-        connS2.sumar('a')
+      connS2.sumar('a')
     except Exception as e:
-        print('Llamada incorrecta de sumar sin un parámetro y tipo. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta de sumar sin un parámetro y tipo. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     try:
-        connS2.potencia()
+      connS2.potencia()
     except Exception as e:
-        print('Llamada incorrecta de potencia sin parámetros. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta de potencia sin parámetros. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     try:
-        connS2.potencia('a')
+      connS2.potencia('a')
     except Exception as e:
-        print('Llamada incorrecta tipo de parametro. Genera excepción necesaria.')
-        print(e.code, e.message)
+      print('Llamada incorrecta tipo de parametro. Genera excepción necesaria.')
+      print(e.code, e.message)
     else:
-        print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzó excepción.')
 
     connS2.close()
     connS1.close()
