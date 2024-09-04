@@ -10,6 +10,7 @@ def concatenar_listas(lista1, lista2):
     return lista1 + lista2
 
 def echo(message):
+    """Devuelve el mismo mensaje que se recibio."""
     return message
 
 server = Server(('localhost', 8082))
