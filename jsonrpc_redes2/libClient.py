@@ -10,7 +10,12 @@ class lanzarExcepcion(Exception):
         super().__init__(message)  # Pasar el mensaje a la clase base Exception
 
 
-
+class ClientError(Exception):
+    def __init__(self, message,*args):
+        self.code = 10054
+        self.message = message
+        self.data = args
+        super().__init__(message)  # Pasar el mensaje a la clase base Exception
 
 class Client:
   def __init__(self, function):
@@ -62,13 +67,17 @@ class Client:
           request = JSONRPC.create_request(name, args)
       
       # Se manda la request
-      self.skt.sendall(json.dumps(request).encode())
+      try:
+        self.skt.sendall(json.dumps(request).encode())
+      except ConnectionResetError as e: 
+        raise ClientError("Connection was reset by the server.",str(e))
+
 
       if not notify:
         buff = ""
 
         # Recibir response
-        while not "}" in buff:
+        while buff.count("{") != buff.count("}") or buff.count("{") < 1:
           try:
             data = self.skt.recv(1024).decode()
             if not data:
@@ -77,7 +86,6 @@ class Client:
           except Exception as e:
             print(f"Error: {e}")
             break 
-
         try:
           response = json.loads(buff) # deserialización
         except json.JSONDecodeError:

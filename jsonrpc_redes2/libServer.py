@@ -19,14 +19,22 @@ class Server:
     # Arrancar el server
     def serve(self):
       # Configurar el socket para escuchar conexiones
-      self.skt.listen()     
+      self.skt.listen()   
+      self.skt.settimeout(5)  # Tiempo de espera de 5 segundos
       print(f"Server escuchando en {self.host}:{self.port}")
-      
-      while True:
-        client, addr = self.skt.accept()
-        print(f"Conexion aceptada de {addr}")
-        thread = threading.Thread(target=self.handle_client, args=(client,))
-        thread.start()
+      try:
+        while True:
+          try:
+            client, addr = self.skt.accept()
+            print(f"Conexion aceptada de {addr}")
+            thread = threading.Thread(target=self.handle_client, args=(client,))
+            thread.start()
+          except TimeoutError:
+            continue
+
+      except KeyboardInterrupt:
+          self.shutdown()
+          
 
     # Agregar metodos 
     def add_method(self, method):
@@ -37,54 +45,56 @@ class Server:
     def handle_client(self, client_socket):
       buffer = ""
       client_socket.settimeout(5) # Setteo de timeout
-      try:
-        while True:
-          
-          buffer=""
-          while not "}" in buffer:
+      while True:      
+        buffer=""
+        while buffer.count("{") != buffer.count("}") or buffer.count("{") < 1:
 
-            # Recibir request
-            try:
-              data = client_socket.recv(1024).decode("utf-8") 
-              if not data:
-                break
-              buffer += data
-            except Exception as e:    
-              print(f"Error: {e}") 
-              break
-          
-          if not data:
-            break
-          
+          # Recibir request
           try:
-            request = json.loads(buffer) # Deserialización
-            method = self.methods.get(request['method']) # Obtener metodo
-            if method:
-              try:
-                result = method(*request['params']) # Aplicar metodo
-                if 'id' in request:
-                  response = JSONRPC.create_response(result, request['id'])
-              except TypeError as e:
-                if 'id' in request:
-                  response = JSONRPC.invalid_params(request['id'], str(e)) # Error de parametros
-            else:
-              id = request.get('id')
-              response = JSONRPC.method_not_found(request['id'] if id else None) # Error de metodo no encontrado
-              
-            if 'id' in request:
-              client_socket.sendall(json.dumps(response).encode()) # Enviar respuesta
-              
-          # Error de formato JSON
-          except json.JSONDecodeError:
-            response = JSONRPC.invalid_request()
+            data = client_socket.recv(1024).decode("utf-8") 
+            if not data:
+              break
+            buffer += data
+          except Exception as e:    
+            print(f"Error: {e}") 
+            break
+        
+        if not data:
+          break
+        
+        try:
+          request = json.loads(buffer) # Deserialización
+          method = self.methods.get(request['method']) # Obtener metodo
+          if method:
+            try:
+              result = method(*request['params']) # Aplicar metodo
+              if 'id' in request:
+                response = JSONRPC.create_response(result, request['id'])
+            except TypeError as e:
+              if 'id' in request:
+                response = JSONRPC.invalid_params(request['id'], str(e)) # Error de parametros
+          else:
+            id = request.get('id')
+            response = JSONRPC.method_not_found(request['id'] if id else None) # Error de metodo no encontrado
+            
+          if 'id' in request:
+            client_socket.sendall(json.dumps(response).encode()) # Enviar respuesta
+        # Error de formato JSON
+        except json.JSONDecodeError:
+          response = JSONRPC.invalid_request()
+          try:
             client_socket.sendall(json.dumps(response).encode())
-            continue
+          except ConnectionResetError as e:
+            print(f"Error: {e}") 
+            return
+
+          continue
 
 
-      except KeyboardInterrupt:
-        self.shutdown()
+     
     
     def shutdown(self):
+      print('El socket Servidor se cerro')
       self.skt.close()
 
 

@@ -1,5 +1,6 @@
 from jsonrpc_redes2 import Server
 import sys
+import time
 
 def test_server():
     # Este método es un ejemplo de cómo se puede usar el servidor.
@@ -26,14 +27,6 @@ def test_server():
     server.serve()
 
     #print ("Servidor ejecutando: %s:%s" % (host, port))
-    
-    try:
-        while True:
-            time.sleep(0.5)
-    except KeyboardInterrupt:
-        server.shutdown()
-        print('Terminado.')
-        sys.exit()
     
 if __name__ == "__main__":
     test_server()
