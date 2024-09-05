@@ -77,15 +77,17 @@ class Client:
         buff = ""
 
         # Recibir response
-        while buff.count("{") != buff.count("}") or buff.count("{") < 1:
+        self.skt.settimeout(5) # Setteo de timeout
+        while buff.count("{") != buff.count("}") or buff.count("{") < 1 or buff[-1] != "}":
           try:
             data = self.skt.recv(1024).decode()
             if not data:
               break
             buff += data
           except Exception as e:
-            print(f"Error: {e}")
-            break 
+
+            break
+ 
         try:
           response = json.loads(buff) # deserialización
         except json.JSONDecodeError:

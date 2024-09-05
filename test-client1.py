@@ -52,8 +52,8 @@ def test_client():
     assert result == [1,2,3,4,5,6]
     print('Test de concatenar listas completada')
 
-    result = connS3.echo('holi}')
-    assert result == 'holi}'
+    result = connS3.echo('hola}')
+    assert result == 'hola}'
     print('Test de echo completada')
 
     result = connS4.echo('holi', notify = True)
@@ -67,6 +67,7 @@ def test_client():
 
     try:
       connS2 = connect('localhost', 8080)
+      print('Conexion Establecida')
     except Exception as e:
       print('No se pudo conectar al servidor')
       print(e.code, e.message)

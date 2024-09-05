@@ -44,25 +44,23 @@ class Server:
     # Manejar el cliente 
     def handle_client(self, client_socket):
       buffer = ""
-      client_socket.settimeout(5) # Setteo de timeout
+      client_socket.settimeout(3) # Setteo de timeout
       while True:      
         buffer=""
-        while buffer.count("{") != buffer.count("}") or buffer.count("{") < 1:
+        seguir = True
+        while buffer.count("{") != buffer.count("}") or buffer.count("{") < 1 or buffer[-1] != "}":
           data = ''
           # Recibir request
           try:
             data = client_socket.recv(1024).decode("utf-8") 
-            print(data)
             if not data:
               break
             buffer += data
           except Exception as e:    
-            print(f"Error: err {e}") 
             break
-        print(f"HOLA: {data}")
-        if data == '':
-          print('llega')
-          break
+        if buffer == '':
+      #    print('llega')
+           break
         try:
           request = json.loads(buffer) # Deserialización
           method = self.methods.get(request['method']) # Obtener metodo
@@ -90,7 +88,6 @@ class Server:
             print(f"Error: {e}") 
             return
 
-          continue
 
     def shutdown(self):
       print('El socket Servidor se cerro')
