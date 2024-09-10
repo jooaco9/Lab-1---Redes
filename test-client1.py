@@ -7,9 +7,10 @@ def test_client():
   try:
     print('=============================')
     print('Iniciando pruebas de casos sin errores.')
-    #ip = 200.0.0.10
+    ip1 = 'localhost'
+    ip2 = 'localhost'
     try:
-      connS1 = connect('localhost', 8080)  
+      connS1 = connect(ip1, 8080)  
     except Exception as e:
       print('No se pudo conectar al servidor')
       print(e.code, e.message)
@@ -17,26 +18,39 @@ def test_client():
           print(e.data)  # Imprime data solo si existe
       return
     
-    # Test de concatenar simple
+    # Test de concatenar
     result = connS1.concatenar('a', 'b')
     assert result == 'ab'
-    print('Test de concatenar simple')
+    print('Test de concatenar completado.')
     
+    # Test de sumar
     result = connS1.sumar(1, 2, 3, 4, 5)
     assert result == 15
     print('Test de sumar completado.')
 
+    # Test de sumar con mas parametros
     result = connS1.sumar(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     assert result == 55
     print('Segundo test de suma con 10 parámetros completado')
 
+    # Test de potencia
     result = connS1.potencia(3, 2)
     assert result == 9
     print('Test de potencia completado.') 
 
+    # Test de crear usuario con todo
+    result = connS1.crear_usuario('Juan', 30, 'Buenos Aires')
+    assert result == 'Nombre: Juan Ciudad: Buenos Aires Edad: 30'
+    print('Test de crear_usuario con todos los parámetros completado.')
+
+    # Test de crear usuario con el obligatorio
+    result = connS1.crear_usuario('Ana')
+    assert result == 'Nombre: Ana Ciudad: Montevideo'
+    print('Test de crear_usuario con parámetros por defecto completado.')
+
     try:
-      connS3 = connect('localhost', 8082)  
-      connS4 = connect('localhost', 8082)
+      connS3 = connect(ip2, 8082)  
+      connS4 = connect(ip2, 8082)
     except Exception as e:
       print('No se pudo conectar al servidor')
       print(e.code, e.message)
@@ -44,21 +58,36 @@ def test_client():
         print(e.data)  # Imprime data solo si existe
       return
     
+    # Test de consultar si es cadena numerica
     result = connS3.es_cadena_numerica('123')
     assert result 
     print('Test de cadena numerica completada')
 
-    result = connS4.concatenar_listas([1,2,3],[4,5,6])
-    assert result == [1,2,3,4,5,6]
+    # Test de metodo con mas de un valor de retorno de concatenar listas
+    result1, result2 = connS4.concatenar_listas([1,2,3],[4,5,6])
+    assert result1 == [1,2,3,4,5,6] 
+    assert result2 == [4,5,6,1,2,3]
     print('Test de concatenar listas completada')
 
-    result = connS3.echo('hola}')
-    assert result == 'hola}'
+    # Test de  echo
+    result = connS3.echo('hola')
+    assert result == 'hola'
     print('Test de echo completada')
 
+    # Test de notify activado
     result = connS4.echo('holi', notify = True)
     assert result == None
     print('Test de notify completada')
+
+    # Test de greeting
+    result = connS3.greeting()
+    assert result == 'Buenos dias'
+    print('Test de greeting completado.')
+
+    # Test de notificacion sin parametros
+    result = connS3.greeting(notify = True)
+    assert result == None
+    print('Test de notificacion sin parámetros completado.')
 
     print('=============================')
     print('Pruebas de casos sin errores completadas.')
@@ -66,7 +95,7 @@ def test_client():
     print('Iniciando pruebas de casos con errores.')
 
     try:
-      connS2 = connect('localhost', 8080)
+      connS2 = connect(ip1, 8080)
       print('Conexion Establecida')
     except Exception as e:
       print('No se pudo conectar al servidor')
@@ -74,15 +103,17 @@ def test_client():
       if e.data is not None:
         print(e.data)  # Imprime data solo si existe
       return
-        
+    
+    # Test de error de llamar a un metodo con menos parametros de los esperados    
     try:
-      connS2.concatenar()
+      connS2.concatenar([1,2,3])
     except Exception as e:
-      print('Llamada incorrecta de concatenar sin parámetros. Genera excepción necesaria.')
+      print('Llamada incorrecta de concatenar con menos parámetros. Genera excepción necesaria.')
       print(e.code, e.message)
     else:
       print('ERROR: No lanzó excepción.')
 
+    # Test de error de llamar a un metodo inexistente
     try:
       connS2.error()
     except Exception as e:
@@ -91,15 +122,16 @@ def test_client():
     else:
       print('ERROR: No lanzó excepción.')
 
-    
+    # Test de error de llamar a un metodo con mas parametros
     try:
-      connS2.concatenar('a')
+      connS2.concatenar('a', 'b', 'd', 'f')
     except Exception as e:
-      print('Llamada incorrecta de concatenar sin un parámetro. Genera excepción necesaria.')
+      print('Llamada incorrecta de concatenar con mas parámetro. Genera excepción necesaria.')
       print(e.code, e.message)
     else:
       print('ERROR: No lanzó excepción.')
 
+    # Test de error de llamar a un metodo sin parametros
     try:
       connS2.sumar()
     except Exception as e:
@@ -108,14 +140,7 @@ def test_client():
     else:
       print('ERROR: No lanzó excepción.')
 
-    try:
-      connS2.sumar(1)
-    except Exception as e:
-      print('Llamada incorrecta de sumar sin un parámetro. Genera excepción necesaria.')
-      print(e.code, e.message)
-    else:
-      print('ERROR: No lanzó excepción.')
-
+    # Test de error de llamar a un metodo con otro tipo de parametros
     try:
       connS2.sumar('a', 'b')
     except Exception as e:
@@ -124,6 +149,7 @@ def test_client():
     else:
       print('ERROR: No lanzó excepción.')
 
+    # Test de error de llamar a un metodo sin un parámetro y tipo incorrecto
     try:
       connS2.sumar('a')
     except Exception as e:
@@ -132,21 +158,15 @@ def test_client():
     else:
       print('ERROR: No lanzó excepción.')
 
+    # Test de error de conectarse a un servidor desconectado
     try:
-      connS2.potencia()
+      connS5 = connect('124.100.43.10', 8080)
     except Exception as e:
-      print('Llamada incorrecta de potencia sin parámetros. Genera excepción necesaria.')
+      print('No se pudo conectar al servidor')
       print(e.code, e.message)
-    else:
-      print('ERROR: No lanzó excepción.')
-
-    try:
-      connS2.potencia('a')
-    except Exception as e:
-      print('Llamada incorrecta tipo de parametro. Genera excepción necesaria.')
-      print(e.code, e.message)
-    else:
-      print('ERROR: No lanzó excepción.')
+      if e.data is not None:
+        print(e.data)  # Imprime data solo si existe
+      return
 
     connS2.close()
     connS1.close()
