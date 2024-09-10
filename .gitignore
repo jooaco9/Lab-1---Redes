@@ -5,3 +5,5 @@ __pycache__/jsonrpc.cpython-310.pyc
 __pycache__/libClient.cpython-310.pyc
 __pycache__/libClientExceptions.cpython-310.pyc
 __pycache__/libServer.cpython-310.pyc
+jsonrpc_redes2/__pycache__/libClient.cpython-312.pyc
+jsonrpc_redes2/__pycache__/libServer.cpython-312.pyc
