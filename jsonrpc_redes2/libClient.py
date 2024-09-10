@@ -3,19 +3,18 @@ from .jsonrpc import JSONRPC
 import json
 
 class lanzarExcepcion(Exception):
-    def __init__(self, code, message, *args):
-        self.code = code
-        self.message = message
-        self.data = args  # Puedes usar esto para pasar datos adicionales si es necesario
-        super().__init__(message)  # Pasar el mensaje a la clase base Exception
-
+  def __init__(self, code, message, *args):
+    self.code = code
+    self.message = message
+    self.data = args  # Puedes usar esto para pasar datos adicionales si es necesario
+    super().__init__(message)  # Pasar el mensaje a la clase base Exception
 
 class ClientError(Exception):
-    def __init__(self, message,*args):
-        self.code = 10054
-        self.message = message
-        self.data = args
-        super().__init__(message)  # Pasar el mensaje a la clase base Exception
+  def __init__(self, message,*args):
+    self.code = 10054
+    self.message = message
+    self.data = args
+    super().__init__(message)  # Pasar el mensaje a la clase base Exception
 
 class Client:
   def __init__(self, function):
@@ -37,21 +36,16 @@ class Client:
       code = -32001
       message = "Connection Refused"
       data = str(e)
-     # response = JSONRPC.create_error_response(code, message, data=str(e))
-     # print(f"{response['error']['message']} -> {response['error']['data']}")
 
     except TimeoutError as e:
       code = 10060
       message = "timeout"
       data = str(e)
-     # response = JSONRPC.create_error_response(code, message, data=str(e))
-    #  print(f"{response['error']['message']} -> {response['error']['data']}")    
+ 
     except gaierror as e:
       code = 11001
       message = "getaddrinfo failed"
       data = ''
-    #  response = JSONRPC.create_error_response(code, message, data=str(e))
-    #  print(f"{response['error']['message']} -> {response['error']['data']}")
     
     raise lanzarExcepcion(code,message,data)
 
@@ -72,12 +66,11 @@ class Client:
       except ConnectionResetError as e: 
         raise ClientError("Connection was reset by the server.",str(e))
 
-
       if not notify:
         buff = ""
 
         # Recibir response
-        self.skt.settimeout(5) # Setteo de timeout
+        self.skt.settimeout(2) # Setteo de timeout
         while buff.count("{") != buff.count("}") or buff.count("{") < 1 or buff[-1] != "}":
           try:
             data = self.skt.recv(1024).decode()
@@ -85,17 +78,17 @@ class Client:
               break
             buff += data
           except Exception as e:
-
             break
  
         try:
           response = json.loads(buff) # deserialización
+          print(f"RESPONSE: {response}")
         except json.JSONDecodeError:
           response = JSONRPC.invalid_request()
           error_message = response['error']['message']
           error_data = response['error'].get('data')
           code = response['error']['code']
-          raise lanzarExcepcion(code, error_data,error_message)
+          raise lanzarExcepcion(code, error_data, error_message)
         #ENDWHILE
 
         # Verificacion de si es respuesta con resultado o si es un error
@@ -105,7 +98,7 @@ class Client:
           error_message = response['error']['message']
           error_data = response['error'].get('data')
           code = response['error']['code']
-          raise lanzarExcepcion(code, error_message,error_data)
+          raise lanzarExcepcion(code, error_message, error_data)
 
       else:
         return 

@@ -33,9 +33,8 @@ class Server:
             continue
 
       except KeyboardInterrupt:
-          self.shutdown()
+        self.shutdown()
           
-
     # Agregar metodos 
     def add_method(self, method):
       self.name = method.__name__
@@ -44,12 +43,13 @@ class Server:
     # Manejar el cliente 
     def handle_client(self, client_socket):
       buffer = ""
-      client_socket.settimeout(3) # Setteo de timeout
+      client_socket.settimeout(1) # Setteo de timeout
+
       while True:      
         buffer=""
-        seguir = True
         while buffer.count("{") != buffer.count("}") or buffer.count("{") < 1 or buffer[-1] != "}":
           data = ''
+          
           # Recibir request
           try:
             data = client_socket.recv(1024).decode("utf-8") 
@@ -58,12 +58,15 @@ class Server:
             buffer += data
           except Exception as e:    
             break
+
         if buffer == '':
-      #    print('llega')
-           break
+          break
+
         try:
           request = json.loads(buffer) # Deserialización
+          print(f"REQUEST: {request}")
           method = self.methods.get(request['method']) # Obtener metodo
+
           if method:
             try:
               result = method(*request['params']) # Aplicar metodo
@@ -87,7 +90,6 @@ class Server:
           except ConnectionResetError as e:
             print(f"Error: {e}") 
             return
-
 
     def shutdown(self):
       print('El socket Servidor se cerro')
