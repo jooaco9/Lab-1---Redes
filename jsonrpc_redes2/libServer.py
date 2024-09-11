@@ -40,7 +40,7 @@ class Server:
         self.name = name
       else:
         self.name = method.__name__
-        
+
       self.methods[self.name] = method
 
     # Manejar el cliente 
@@ -67,12 +67,16 @@ class Server:
 
         if method:
           try:
-            if isinstance(request['params'], dict):
-              result = method(**request['params'])
+            if 'params' in request:
+              if isinstance(request['params'], dict):
+                result = method(**request['params'])
+              else:
+                result = method(*request['params']) # Aplicar metodo
             else:
-              result = method(*request['params']) # Aplicar metodo
+                result = method()
             if 'id' in request:
-              response = JSONRPC.create_response(result, request['id'])
+                response = JSONRPC.create_response(result, request['id'])
+
           except TypeError as e:
             if 'id' in request:
               response = JSONRPC.invalid_params(request['id'], str(e)) # Error de parametros

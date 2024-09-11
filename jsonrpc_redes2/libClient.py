@@ -96,7 +96,8 @@ class Client:
       
       if(kwargs):
         args = kwargs
-        
+      
+  
       # Verificacion de notificacion para crear request o notificacion
       if notify:
           request = JSONRPC.create_notification(name, args)

@@ -16,7 +16,6 @@ class JSONRPC:
       "params": params,
       "id": id or str(uuid.uuid4())
     }
-  
   @staticmethod
   def create_response(result, id):
     return {
