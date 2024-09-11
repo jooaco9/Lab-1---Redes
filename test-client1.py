@@ -7,8 +7,9 @@ def test_client():
   try:
     print('=============================')
     print('Iniciando pruebas de casos sin errores.')
-    ip1 = 'localhost'
-    ip2 = 'localhost'
+    # ip1 = '200.0.0.10'
+    # ip2 = '200.100.0.15'
+    ip1 = ip2 = 'localhost'
     try:
       connS1 = connect(ip1, 8080)  
     except Exception as e:
@@ -22,9 +23,14 @@ def test_client():
     result = connS1.concatenar('a', 'b')
     assert result == 'ab'
     print('Test de concatenar completado.')
+
+    # Test de concatenar con kwargs
+    result = connS1.concatenar(cadena1='Hola ', cadena2='Mundo')
+    assert result == "Hola Mundo"
+    print("Test de concatenar con kwargs completado.")
     
     # Test de sumar
-    result = connS1.sumar(1, 2, 3, 4, 5)
+    result = connS1.sumar(1,2, 3, 4, 5)
     assert result == 15
     print('Test de sumar completado.')
 
@@ -37,6 +43,7 @@ def test_client():
     result = connS1.potencia(3, 2)
     assert result == 9
     print('Test de potencia completado.') 
+    time.sleep(15)
 
     # Test de crear usuario con todo
     result = connS1.crear_usuario('Juan', 30, 'Buenos Aires')
@@ -148,6 +155,17 @@ def test_client():
       print(e.code, e.message)
     else:
       print('ERROR: No lanzó excepción.')
+
+    
+    # Test de sumar con args y kwargs (error)
+    try:
+      result = connS1.sumar(1,2, 3, a1=4, a2=5)
+    except Exception as e:
+      print('Llamada incorrecta de sumar con argumentos y kwargs. Genera excepción necesaria.')
+      print(e.code, e.message)
+    else:
+      print('ERROR: No lanzó excepción.')
+
 
     # Test de error de llamar a un metodo sin un parámetro y tipo incorrecto
     try:

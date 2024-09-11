@@ -25,12 +25,42 @@ class Client:
     self.host = host
     self.port = port
 
-    # Crear el socket TCP
+    self.skt = socket(AF_INET, SOCK_STREAM)
+    try:
+      self.skt.connect((self.host, self.port)) 
+      self.skt.close()
+      # Crear el socket TCP
+      return self    # Error al no poder conectarse
+    except ConnectionRefusedError as e:
+      code = -32001
+      message = "Connection Refused"
+      data = str(e)
+
+    except TimeoutError as e:
+      code = 10060
+      message = "timeout"
+      data = str(e)
+
+    except gaierror as e:
+      code = 11001
+      message = "getaddrinfo failed"
+      data = ''
+
+    except OSError as e:
+      code = 101
+      message = "getaddrinfo failed"
+      data = ''
+
+    raise lanzarExcepcion(code,message,data)    
+
+  # getattr 
+  def __getattr__(self, name):
+    #Me conecto con el servidor
+    error = True
     self.skt = socket(AF_INET, SOCK_STREAM)
     try:
       self.skt.connect((self.host, self.port))
-      return self
-  
+      error = False
     # Error al no poder conectarse
     except ConnectionRefusedError as e:
       code = -32001
@@ -46,14 +76,27 @@ class Client:
       code = 11001
       message = "getaddrinfo failed"
       data = ''
-    
-    raise lanzarExcepcion(code,message,data)
 
-  # getattr 
-  def __getattr__(self, name):
+    except OSError as e:
+      code = 101
+      message = "getaddrinfo failed"
+      data = ''
+    if error:
+      raise lanzarExcepcion(code,message,data)
+    
+    #Llamo al metodo
     def method(*args,**kwargs):
       notify = kwargs.pop('notify', False)
-      args = list(args) + list(kwargs.values())
+      if(args and kwargs):  
+        response = JSONRPC.internal_error()
+        error_message = response['error']['message']
+        error_data = response['error'].get('data')
+        code = response['error']['code']
+        raise lanzarExcepcion(code, error_message, error_data)
+      
+      if(kwargs):
+        args = kwargs
+        
       # Verificacion de notificacion para crear request o notificacion
       if notify:
           request = JSONRPC.create_notification(name, args)
@@ -79,7 +122,8 @@ class Client:
             buff += data
           except Exception as e:
             break
- 
+        
+
         try:
           response = json.loads(buff) # deserialización
           print(f"RESPONSE: {response}")
@@ -88,7 +132,7 @@ class Client:
           error_message = response['error']['message']
           error_data = response['error'].get('data')
           code = response['error']['code']
-          raise lanzarExcepcion(code, error_data, error_message)
+          raise lanzarExcepcion(code, error_message, error_data)
         #ENDWHILE
 
         # Verificacion de si es respuesta con resultado o si es un error
