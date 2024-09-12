@@ -7,9 +7,9 @@ def test_client():
   try:
     print('=============================')
     print('Iniciando pruebas de casos sin errores.')
-    # ip1 = '200.0.0.10'
-    # ip2 = '200.100.0.15'
-    ip1 = ip2 = 'localhost'
+    ip1 = '200.0.0.10'
+    ip2 = '200.100.0.15'
+    # ip1 = ip2 = 'localhost'
     try:
       connS1 = connect(ip1, 8080)  
     except Exception as e:
@@ -43,7 +43,6 @@ def test_client():
     result = connS1.potencia(3, 2)
     assert result == 9
     print('Test de potencia completado.') 
-    time.sleep(15)
 
     # Test de crear usuario con todo
     result = connS1.crear_usuario('Juan', 30, 'Buenos Aires')
@@ -56,8 +55,8 @@ def test_client():
     print('Test de crear_usuario con parámetros por defecto completado.')
 
     try:
-      connS3 = connect(ip2, 8082)  
-      connS4 = connect(ip2, 8082)
+      connS3 = connect(ip2, 8080)  
+      connS4 = connect(ip2, 8080)
     except Exception as e:
       print('No se pudo conectar al servidor')
       print(e.code, e.message)
@@ -110,7 +109,7 @@ def test_client():
       if e.data is not None:
         print(e.data)  # Imprime data solo si existe
       return
-    
+
     # Test de error de llamar a un metodo con menos parametros de los esperados    
     try:
       connS2.concatenar([1,2,3])
@@ -126,6 +125,18 @@ def test_client():
     except Exception as e:
       print('Llamada a método inexistente. Genera excepción necesaria.')
       print(e.code, e.message)
+    else:
+      print('ERROR: No lanzó excepción.')
+
+    print('Matar al server 2')
+    time.sleep(15)
+
+    # Matamos al servidor 2
+    try:
+      connS3.echo("KILL")
+    except Exception as e:
+      print("Llamada a server que se desconecto")
+      print(e)
     else:
       print('ERROR: No lanzó excepción.')
 
@@ -185,11 +196,6 @@ def test_client():
       if e.data is not None:
         print(e.data)  # Imprime data solo si existe
       return
-
-    connS2.close()
-    connS1.close()
-    connS3.close()
-    connS4.close()
 
     print('=============================')
     print("Pruebas de casos con errores completadas.")
