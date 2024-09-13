@@ -17,8 +17,10 @@ class ClientError(Exception):
     super().__init__(message)  # Pasar el mensaje a la clase base Exception
 
 class Client:
-  def __init__(self, function):
-    pass
+  def __init__(self):
+    self.skt = None
+    self.host = None
+    self.port = None
     
   # Call
   def __call__(self, host, port):
@@ -112,19 +114,31 @@ class Client:
 
       if not notify:
         buff = ""
-
         # Recibir response
-        self.skt.settimeout(2) # Setteo de timeout
-        while buff.count("{") != buff.count("}") or buff.count("{") < 1 or buff[-1] != "}":
-          try:
-            data = self.skt.recv(1024).decode()
-            if not data:
-              break
-            buff += data
-          except Exception as e:
-            break
-        
+        self.skt.settimeout(None) # Setteo de timeout
+        primeraVez = True
+        try:
+          while buff.count("{") != buff.count("}") or buff.count("{") < 1 or buff[-1] != "}":
+            try:
+              data = self.skt.recv(1024).decode()
+              
+              if(primeraVez):
+                primeraVez = False
+                self.skt.settimeout(3)
 
+              if not data:
+                break
+              buff += data
+            
+            except TimeoutError:
+              break
+            except Exception:
+              raise ClientError("Connection was reset by the server.",str(e))
+
+        except KeyboardInterrupt:
+          self.close() 
+          return 'Cliente cerrado'
+        
         try:
           response = json.loads(buff) # deserialización
           print(f"RESPONSE: {response}")
@@ -153,7 +167,8 @@ class Client:
   def close(self):
     self.skt.close()
 
-@Client
 def connect(host, port):
-  pass
+    c = Client()  
+    return c(host, port)  
+
   
