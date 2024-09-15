@@ -1,6 +1,6 @@
 # Instrucciones para la Ejecución Local
 
-Para ejecutar el sistema de manera local, sigue los pasos detallados a continuación:
+Para ejecutar el sistema de manera local, seguir los siguientes pasos:
 
 ## Configuración de los Servidores
 
