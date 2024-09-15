@@ -1,6 +1,7 @@
 from jsonrpc_redes import Server
 import math
 import time
+
 def concatenar(cadena1, cadena2):
   """Concatena dos cadenas de texto."""
   return cadena1 + cadena2
@@ -20,13 +21,8 @@ def crear_usuario(nombre, edad=None, ciudad="Montevideo"):
   return nomCiu
 #ip = '200.0.0.10'
 
-def hacer_tiempo():
-  time.sleep(10)
-  return '10 segundos'
-
 server = Server(('localhost', 8080))
 server.add_method(potencia)
-server.add_method(hacer_tiempo)
 server.add_method(concatenar)
 server.add_method(sumar)
 server.add_method(crear_usuario)
