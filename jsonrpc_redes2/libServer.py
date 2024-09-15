@@ -96,7 +96,6 @@ class Server:
             response = JSONRPC.method_not_found(request['id'] if id else None) # Error de metodo no encontrado
           if 'id' in request:
             try:
-              print(response)
               client_socket.sendall(json.dumps(response).encode())
             except ConnectionResetError as e:
               print(f"Error: {e}") 
