@@ -15,7 +15,7 @@ def echo(message):
 def greeting():
   return "Buenos dias"
 
-server = Server(('localhost', 8080))
+server = Server(('200.100.0.15', 8080))
 
 server.add_method(echo)
 server.add_method(concatenar_listas)

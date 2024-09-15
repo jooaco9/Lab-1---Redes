@@ -7,12 +7,12 @@ def test_client():
   try:
     print('=======================================================================================')
     print('Iniciando pruebas de casos sin errores:\n')
-    #ip1 = '200.0.0.10'
-    #ip2 = '200.100.0.15'
-    ip1 = ip2 = 'localhost'
+    ip1 = '200.0.0.10'
+    ip2 = '200.100.0.15'
+    # ip1 = ip2 = 'localhost'
     try:
       connS1 = connect(ip1, 8080)
-      connS2 = connect(ip2, 8082)  
+      connS2 = connect(ip2, 8080)  
     except Exception as e:
       print('No se pudo conectar al servidor')
       print(e.code, e.message)
@@ -120,15 +120,6 @@ def test_client():
     else:
       print('ERROR: No lanzó excepción.')
 
-    # Matamos al servidor 2
-    try:
-      result = connS3.echo('hola')
-    except Exception as e:
-      print("Llamada a server que se desconecto")
-      print(e, "\n")
-    else:
-      print('ERROR: No lanzó excepción.')
-
     # Test de error de llamar a un metodo con mas parametros
     try:
       connS3.concatenar('a', 'b', 'd', 'f')
@@ -161,9 +152,9 @@ def test_client():
       result = connS3.sumar(1,2, 3, a1=4, a2=5)
     except Exception as e:
       print('Llamada incorrecta de sumar con argumentos y kwargs. Genera excepción necesaria.')
-      print(e.code, e.message, "\n")
+      print(str(e), "\n")
     else:
-      print('ERROR: No lanzó excepción.')
+      print('ERROR: No lanzo excepcion.')
 
     # Test de error de llamar a un metodo sin un parámetro y tipo incorrecto
     try:

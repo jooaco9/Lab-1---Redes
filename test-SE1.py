@@ -20,7 +20,7 @@ def crear_usuario(nombre, edad=None, ciudad="Montevideo"):
   return nomCiu
 #ip = '200.0.0.10'
 
-server = Server(('localhost', 8080))
+server = Server(('200.0.0.10', 8080))
 server.add_method(potencia)
 server.add_method(concatenar)
 server.add_method(sumar)
