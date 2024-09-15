@@ -15,8 +15,9 @@ def echo(message):
 def greeting():
   return "Buenos dias"
 
-server = Server(('200.100.0.15', 8080))
+ip = '200.100.0.15'
 
+server = Server((ip, 8080))
 server.add_method(echo)
 server.add_method(concatenar_listas)
 server.add_method(es_cadena_numerica)

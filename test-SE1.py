@@ -18,7 +18,6 @@ def crear_usuario(nombre, edad=None, ciudad="Montevideo"):
   if edad:
     return nomCiu + f" Edad: {edad}"
   return nomCiu
-#ip = '200.0.0.10'
 
 server = Server(('200.0.0.10', 8080))
 server.add_method(potencia)
